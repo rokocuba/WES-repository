@@ -3,6 +3,7 @@
 
 #include "gui.h"
 #include "camera_capture.h"
+#include "sht31_service.h"
 
 static const char *TAG_MAIN = "MAIN";
 
@@ -23,6 +24,12 @@ static void on_camera_frame(const camera_capture_frame_t *frame, void *user_ctx)
 
 void app_main() {
     gui_init();
+
+    sht31_service_config_t sht_cfg = SHT31_SERVICE_DEFAULT_CONFIG();
+    sht_cfg.enable_ui_label_update = true;
+    if (sht31_service_start(&sht_cfg) != ESP_OK) {
+        ESP_LOGE(TAG_MAIN, "SHT31 service failed to initialize.");
+    }
 
     camera_capture_config_t cfg = CAMERA_CAPTURE_DEFAULT_CONFIG();
     cfg.enable_display = true;         // Keep LVGL preview enabled
