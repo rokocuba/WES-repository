@@ -314,8 +314,6 @@ void ui_init(void)
                                                false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_Home_Scr_screen_init();
-    ui_Color_Scr_screen_init();
-    ui_Settings_Scr_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_Home_Scr);
 }
@@ -323,6 +321,4 @@ void ui_init(void)
 void ui_destroy(void)
 {
     ui_Home_Scr_screen_destroy();
-    ui_Color_Scr_screen_destroy();
-    ui_Settings_Scr_screen_destroy();
 }
