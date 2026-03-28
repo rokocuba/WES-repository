@@ -74,5 +74,3 @@ dependencies.lock
 managed_components/
 
 sdkconfig
-
-components/ui_app/ui_exports
