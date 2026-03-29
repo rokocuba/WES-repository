@@ -17,7 +17,7 @@ extern lv_obj_t * ui_Vlaga_scr;
 extern lv_obj_t * ui_Label3;
 extern lv_obj_t * ui_Label4;
 extern lv_obj_t * ui_Vlagavalue;
-extern lv_obj_t * ui_temp;
+extern lv_obj_t * ui_Label6;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

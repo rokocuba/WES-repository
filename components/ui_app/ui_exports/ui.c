@@ -18,14 +18,6 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-lv_img_dsc_t * ui_imgset_[] = {
-    (lv_img_dsc_t *)&ui_img_5224653,
-    (lv_img_dsc_t *)&ui_img_dots_png,
-    (lv_img_dsc_t *)&ui_img_previous_png,
-    (lv_img_dsc_t *)&ui_img_pause_png,
-    (lv_img_dsc_t *)&ui_img_next_png,
-    (lv_img_dsc_t *)&ui_img_117368779,
-};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -341,6 +333,8 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay)
 
 void ui_init(void)
 {
+    LV_EVENT_GET_COMP_CHILD = lv_event_register_id();
+
     lv_disp_t * dispp = lv_disp_get_default();
     lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
                                                false, LV_FONT_DEFAULT);
