@@ -34,6 +34,15 @@ extern lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 // EVENTS
 extern lv_obj_t * ui____initial_actions0;
 
+// IMAGES AND IMAGE SETS
+LV_IMG_DECLARE(ui_img_bg16_png);    // assets/bg16.png
+LV_IMG_DECLARE(ui_img_5224653);    // assets/123 (1).png
+LV_IMG_DECLARE(ui_img_2121686456);    // assets/musical-note.png
+LV_IMG_DECLARE(ui_img_dots_png);    // assets/dots.png
+LV_IMG_DECLARE(ui_img_pause_png);    // assets/pause.png
+LV_IMG_DECLARE(ui_img_home_icon_png);    // assets/home_icon.png
+LV_IMG_DECLARE(ui_img_117368779);    // assets/photo-camera.png
+
 // UI INIT
 void ui_init(void);
 void ui_destroy(void);

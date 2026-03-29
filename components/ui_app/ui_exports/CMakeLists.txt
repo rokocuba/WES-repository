@@ -7,6 +7,13 @@ SET(SOURCES components/ui_comp_temp.c
     ui.c
     components/ui_comp_hook.c
     ui_helpers.c
-    ui_events.c)
+    ui_events.c
+    images/ui_img_bg16_png.c
+    images/ui_img_5224653.c
+    images/ui_img_2121686456.c
+    images/ui_img_dots_png.c
+    images/ui_img_pause_png.c
+    images/ui_img_home_icon_png.c
+    images/ui_img_117368779.c)
 
 add_library(ui ${SOURCES})

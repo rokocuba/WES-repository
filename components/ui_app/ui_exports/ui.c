@@ -18,6 +18,9 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
+static lv_img_dsc_t *ui_imgset_[] = {
+    (lv_img_dsc_t *)&ui_img_bg16_png,
+};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -33,6 +36,8 @@ lv_anim_t * SpinAndLargen_Animation(lv_obj_t * TargetObject, int delay)
     lv_anim_t * out_anim;
     ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_0_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_0_user_data->val = -1;
     lv_anim_t PropertyAnimation_0;
     lv_anim_init(&PropertyAnimation_0);
@@ -52,6 +57,8 @@ lv_anim_t * SpinAndLargen_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_0);
     ui_anim_user_data_t * PropertyAnimation_1_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_1_user_data->target = TargetObject;
+    PropertyAnimation_1_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_1_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_1_user_data->val = -1;
     lv_anim_t PropertyAnimation_1;
     lv_anim_init(&PropertyAnimation_1);
@@ -70,6 +77,8 @@ lv_anim_t * SpinAndLargen_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_1);
     ui_anim_user_data_t * PropertyAnimation_2_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_2_user_data->target = TargetObject;
+    PropertyAnimation_2_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_2_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_2_user_data->val = -1;
     lv_anim_t PropertyAnimation_2;
     lv_anim_init(&PropertyAnimation_2);
@@ -94,6 +103,8 @@ lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay)
     lv_anim_t * out_anim;
     ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_0_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_0_user_data->val = -1;
     lv_anim_t PropertyAnimation_0;
     lv_anim_init(&PropertyAnimation_0);
@@ -112,6 +123,8 @@ lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_0);
     ui_anim_user_data_t * PropertyAnimation_1_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_1_user_data->target = TargetObject;
+    PropertyAnimation_1_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_1_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_1_user_data->val = -1;
     lv_anim_t PropertyAnimation_1;
     lv_anim_init(&PropertyAnimation_1);
@@ -130,6 +143,8 @@ lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_1);
     ui_anim_user_data_t * PropertyAnimation_2_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_2_user_data->target = TargetObject;
+    PropertyAnimation_2_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_2_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_2_user_data->val = -1;
     lv_anim_t PropertyAnimation_2;
     lv_anim_init(&PropertyAnimation_2);
@@ -148,6 +163,8 @@ lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_2);
     ui_anim_user_data_t * PropertyAnimation_3_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_3_user_data->target = TargetObject;
+    PropertyAnimation_3_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_3_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_3_user_data->val = -1;
     lv_anim_t PropertyAnimation_3;
     lv_anim_init(&PropertyAnimation_3);
@@ -172,6 +189,8 @@ lv_anim_t * MoveColorToCenter_Animation(lv_obj_t * TargetObject, int delay)
     lv_anim_t * out_anim;
     ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_0_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_0_user_data->val = -1;
     lv_anim_t PropertyAnimation_0;
     lv_anim_init(&PropertyAnimation_0);
@@ -191,6 +210,8 @@ lv_anim_t * MoveColorToCenter_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_0);
     ui_anim_user_data_t * PropertyAnimation_1_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_1_user_data->target = TargetObject;
+    PropertyAnimation_1_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_1_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_1_user_data->val = -1;
     lv_anim_t PropertyAnimation_1;
     lv_anim_init(&PropertyAnimation_1);
@@ -215,6 +236,8 @@ lv_anim_t * MoveSettingsToCenter_Animation(lv_obj_t * TargetObject, int delay)
     lv_anim_t * out_anim;
     ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_0_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_0_user_data->val = -1;
     lv_anim_t PropertyAnimation_0;
     lv_anim_init(&PropertyAnimation_0);
@@ -233,6 +256,8 @@ lv_anim_t * MoveSettingsToCenter_Animation(lv_obj_t * TargetObject, int delay)
     out_anim = lv_anim_start(&PropertyAnimation_0);
     ui_anim_user_data_t * PropertyAnimation_1_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_1_user_data->target = TargetObject;
+    PropertyAnimation_1_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_1_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_1_user_data->val = -1;
     lv_anim_t PropertyAnimation_1;
     lv_anim_init(&PropertyAnimation_1);
@@ -257,6 +282,8 @@ lv_anim_t * HideBtn_Animation(lv_obj_t * TargetObject, int delay)
     lv_anim_t * out_anim;
     ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_0_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_0_user_data->val = -1;
     lv_anim_t PropertyAnimation_0;
     lv_anim_init(&PropertyAnimation_0);
@@ -281,6 +308,8 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay)
     lv_anim_t * out_anim;
     ui_anim_user_data_t * PropertyAnimation_0_user_data = lv_mem_alloc(sizeof(ui_anim_user_data_t));
     PropertyAnimation_0_user_data->target = TargetObject;
+    PropertyAnimation_0_user_data->imgset = (lv_img_dsc_t **)ui_imgset_;
+    PropertyAnimation_0_user_data->imgset_size = sizeof(ui_imgset_) / (sizeof(lv_img_dsc_t *));
     PropertyAnimation_0_user_data->val = -1;
     lv_anim_t PropertyAnimation_0;
     lv_anim_init(&PropertyAnimation_0);

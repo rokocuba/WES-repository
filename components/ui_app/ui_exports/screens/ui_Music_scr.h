@@ -16,17 +16,13 @@ extern void ui_Music_scr_screen_destroy(void);
 extern lv_obj_t * ui_Music_scr;
 extern lv_obj_t * ui_LED_color_panel;
 extern lv_obj_t * ui_LED_color_label;
-extern lv_obj_t * ui_songlabel;
-extern void ui_event_Button2(lv_event_t * e);
-extern lv_obj_t * ui_Button2;
-extern lv_obj_t * ui_Image5;
-extern void ui_event_Button3(lv_event_t * e);
-extern lv_obj_t * ui_Button3;
+extern lv_obj_t * ui_svemir;
+extern void ui_event_playButton(lv_event_t * e);
+extern lv_obj_t * ui_playButton;
 extern lv_obj_t * ui_Image4;
-extern void ui_event_Button4(lv_event_t * e);
-extern lv_obj_t * ui_Button4;
-extern void ui_event_Image3(lv_event_t * e);
-extern lv_obj_t * ui_Image3;
+extern void ui_event_Button7(lv_event_t * e);
+extern lv_obj_t * ui_Button7;
+extern lv_obj_t * ui_Image9;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus
