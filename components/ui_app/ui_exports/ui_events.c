@@ -14,3 +14,23 @@ void dark_mode_off(lv_event_t * e)
 {
 	// Your code here
 }
+
+void prev_song(lv_event_t * e)
+{
+	// Your code here
+}
+
+void pause_song(lv_event_t * e)
+{
+	// Your code here
+}
+
+void next_song(lv_event_t * e)
+{
+	// Your code here
+}
+
+void slikaj_sliku(lv_event_t * e)
+{
+	// Your code here
+}
