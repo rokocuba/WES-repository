@@ -4,6 +4,10 @@ set(COMPONENT_REQUIRES
 	esp_driver_gpio
 	esp_driver_i2s
 	esp_driver_uart
+	esp_event
+	esp_netif
+	esp_wifi
+	nvs_flash
 	spiffs
 	lvgl
 	lvgl_esp32_drivers
