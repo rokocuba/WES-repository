@@ -91,6 +91,7 @@ void ui_Home_Scr_screen_init(void)
     lv_obj_set_style_border_side(ui_BTN_Num, LV_BORDER_SIDE_FULL, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Image8 = lv_img_create(ui_BTN_Num);
+    lv_img_set_src(ui_Image8, &ui_img_5224653);
     lv_obj_set_width(ui_Image8, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image8, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_align(ui_Image8, LV_ALIGN_CENTER);
@@ -149,6 +150,7 @@ void ui_Home_Scr_screen_init(void)
     lv_obj_set_style_border_side(ui_Button1, LV_BORDER_SIDE_FULL, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Image2 = lv_img_create(ui_Button1);
+    lv_img_set_src(ui_Image2, &ui_img_dots_png);
     lv_obj_set_width(ui_Image2, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image2, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_x(ui_Image2, 1);

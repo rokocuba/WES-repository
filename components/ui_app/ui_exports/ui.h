@@ -13,17 +13,18 @@ extern "C" {
 #include "lvgl.h"
 
 #include "ui_helpers.h"
-#include "components/ui_comp.h"
-#include "components/ui_comp_hook.h"
 #include "ui_events.h"
 
+
 ///////////////////// SCREENS ////////////////////
+
 #include "screens/ui_Home_Scr.h"
 #include "screens/ui_Music_scr.h"
 #include "screens/ui_Number_scr.h"
 #include "screens/ui_Vlaga_scr.h"
 
 ///////////////////// VARIABLES ////////////////////
+
 extern lv_anim_t * SpinAndLargen_Animation(lv_obj_t * TargetObject, int delay);
 extern lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay);
 extern lv_anim_t * MoveColorToCenter_Animation(lv_obj_t * TargetObject, int delay);
@@ -32,7 +33,16 @@ extern lv_anim_t * HideBtn_Animation(lv_obj_t * TargetObject, int delay);
 extern lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 
 // EVENTS
+
 extern lv_obj_t * ui____initial_actions0;
+
+// IMAGES AND IMAGE SETS
+LV_IMG_DECLARE(ui_img_5224653);    // assets/123 (1).png
+LV_IMG_DECLARE(ui_img_dots_png);    // assets/dots.png
+LV_IMG_DECLARE(ui_img_previous_png);    // assets/previous.png
+LV_IMG_DECLARE(ui_img_pause_png);    // assets/pause.png
+LV_IMG_DECLARE(ui_img_next_png);    // assets/next.png
+LV_IMG_DECLARE(ui_img_117368779);    // assets/photo-camera.png
 
 // UI INIT
 void ui_init(void);
