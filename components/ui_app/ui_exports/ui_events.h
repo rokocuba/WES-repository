@@ -10,10 +10,7 @@
 extern "C" {
 #endif
 
-void prev_song(lv_event_t * e);
 void pause_song(lv_event_t * e);
-void next_song(lv_event_t * e);
-void NextPjesma(lv_event_t * e);
 void slikaj_sliku(lv_event_t * e);
 
 #ifdef __cplusplus

@@ -8,49 +8,18 @@
 lv_obj_t * ui_Music_scr = NULL;
 lv_obj_t * ui_LED_color_panel = NULL;
 lv_obj_t * ui_LED_color_label = NULL;
-lv_obj_t * ui_songlabel = NULL;
-lv_obj_t * ui_Button2 = NULL;
-lv_obj_t * ui_Image5 = NULL;
-lv_obj_t * ui_Button3 = NULL;
+lv_obj_t * ui_svemir = NULL;
+lv_obj_t * ui_playButton = NULL;
 lv_obj_t * ui_Image4 = NULL;
-lv_obj_t * ui_Button4 = NULL;
-lv_obj_t * ui_Image3 = NULL;
 lv_obj_t * ui_Button7 = NULL;
 lv_obj_t * ui_Image9 = NULL;
 // event funtions
-void ui_event_Button2(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        prev_song(e);
-    }
-}
-
-void ui_event_Button3(lv_event_t * e)
+void ui_event_playButton(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
         pause_song(e);
-    }
-}
-
-void ui_event_Button4(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        next_song(e);
-    }
-}
-
-void ui_event_Image3(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        NextPjesma(e);
     }
 }
 
@@ -93,70 +62,34 @@ void ui_Music_scr_screen_init(void)
     lv_label_set_text(ui_LED_color_label, "PJESMICE");
     lv_obj_set_style_text_font(ui_LED_color_label, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_songlabel = lv_label_create(ui_Music_scr);
-    lv_obj_set_width(ui_songlabel, lv_pct(50));
-    lv_obj_set_height(ui_songlabel, lv_pct(10));
-    lv_obj_set_x(ui_songlabel, -2);
-    lv_obj_set_y(ui_songlabel, -43);
-    lv_obj_set_align(ui_songlabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_songlabel, "No songs playing");
-    lv_obj_set_style_text_align(ui_songlabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui_songlabel, 50, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_songlabel, lv_color_hex(0x0FC46D), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_songlabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_svemir = lv_label_create(ui_Music_scr);
+    lv_obj_set_width(ui_svemir, lv_pct(50));
+    lv_obj_set_height(ui_svemir, lv_pct(10));
+    lv_obj_set_x(ui_svemir, -2);
+    lv_obj_set_y(ui_svemir, -43);
+    lv_obj_set_align(ui_svemir, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_svemir, "DEVITO - SVEMIR");
+    lv_obj_set_style_text_align(ui_svemir, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui_svemir, 50, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_svemir, lv_color_hex(0x0FC46D), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_svemir, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Button2 = lv_btn_create(ui_Music_scr);
-    lv_obj_set_width(ui_Button2, 75);
-    lv_obj_set_height(ui_Button2, 68);
-    lv_obj_set_x(ui_Button2, -93);
-    lv_obj_set_y(ui_Button2, 31);
-    lv_obj_set_align(ui_Button2, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button2, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Button2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_playButton = lv_btn_create(ui_Music_scr);
+    lv_obj_set_width(ui_playButton, 75);
+    lv_obj_set_height(ui_playButton, 68);
+    lv_obj_set_x(ui_playButton, 2);
+    lv_obj_set_y(ui_playButton, 31);
+    lv_obj_set_align(ui_playButton, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_playButton, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_playButton, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_Image5 = lv_img_create(ui_Button2);
-    lv_img_set_src(ui_Image5, &ui_img_previous_png);
-    lv_obj_set_width(ui_Image5, LV_SIZE_CONTENT);   /// 64
-    lv_obj_set_height(ui_Image5, LV_SIZE_CONTENT);    /// 64
-    lv_obj_set_x(ui_Image5, -3);
-    lv_obj_set_y(ui_Image5, 0);
-    lv_obj_set_align(ui_Image5, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Image5, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Image5, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_Button3 = lv_btn_create(ui_Music_scr);
-    lv_obj_set_width(ui_Button3, 75);
-    lv_obj_set_height(ui_Button3, 68);
-    lv_obj_set_x(ui_Button3, 2);
-    lv_obj_set_y(ui_Button3, 31);
-    lv_obj_set_align(ui_Button3, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button3, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Button3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_Image4 = lv_img_create(ui_Button3);
+    ui_Image4 = lv_img_create(ui_playButton);
     lv_img_set_src(ui_Image4, &ui_img_pause_png);
     lv_obj_set_width(ui_Image4, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image4, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_align(ui_Image4, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Image4, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_Image4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_Button4 = lv_btn_create(ui_Music_scr);
-    lv_obj_set_width(ui_Button4, 75);
-    lv_obj_set_height(ui_Button4, 68);
-    lv_obj_set_x(ui_Button4, 98);
-    lv_obj_set_y(ui_Button4, 31);
-    lv_obj_set_align(ui_Button4, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Button4, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Button4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_Image3 = lv_img_create(ui_Button4);
-    lv_img_set_src(ui_Image3, &ui_img_next_png);
-    lv_obj_set_width(ui_Image3, LV_SIZE_CONTENT);   /// 64
-    lv_obj_set_height(ui_Image3, LV_SIZE_CONTENT);    /// 64
-    lv_obj_set_align(ui_Image3, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Image3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Image3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Button7 = lv_btn_create(ui_Music_scr);
     lv_obj_set_width(ui_Button7, 75);
@@ -178,10 +111,7 @@ void ui_Music_scr_screen_init(void)
     lv_obj_clear_flag(ui_Image9, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_Image9, 150);
 
-    lv_obj_add_event_cb(ui_Button2, ui_event_Button2, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Button3, ui_event_Button3, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Image3, ui_event_Image3, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Button4, ui_event_Button4, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_playButton, ui_event_playButton, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button7, ui_event_Button7, LV_EVENT_ALL, NULL);
 
 }
@@ -194,13 +124,9 @@ void ui_Music_scr_screen_destroy(void)
     ui_Music_scr = NULL;
     ui_LED_color_panel = NULL;
     ui_LED_color_label = NULL;
-    ui_songlabel = NULL;
-    ui_Button2 = NULL;
-    ui_Image5 = NULL;
-    ui_Button3 = NULL;
+    ui_svemir = NULL;
+    ui_playButton = NULL;
     ui_Image4 = NULL;
-    ui_Button4 = NULL;
-    ui_Image3 = NULL;
     ui_Button7 = NULL;
     ui_Image9 = NULL;
 

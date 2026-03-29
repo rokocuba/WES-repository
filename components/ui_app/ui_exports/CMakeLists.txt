@@ -12,9 +12,7 @@ SET(SOURCES components/ui_comp_temp.c
     images/ui_img_5224653.c
     images/ui_img_2121686456.c
     images/ui_img_dots_png.c
-    images/ui_img_previous_png.c
     images/ui_img_pause_png.c
-    images/ui_img_next_png.c
     images/ui_img_home_icon_png.c
     images/ui_img_117368779.c)
 

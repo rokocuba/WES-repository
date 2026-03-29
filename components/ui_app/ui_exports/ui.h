@@ -39,9 +39,7 @@ LV_IMG_DECLARE(ui_img_bg16_png);    // assets/bg16.png
 LV_IMG_DECLARE(ui_img_5224653);    // assets/123 (1).png
 LV_IMG_DECLARE(ui_img_2121686456);    // assets/musical-note.png
 LV_IMG_DECLARE(ui_img_dots_png);    // assets/dots.png
-LV_IMG_DECLARE(ui_img_previous_png);    // assets/previous.png
 LV_IMG_DECLARE(ui_img_pause_png);    // assets/pause.png
-LV_IMG_DECLARE(ui_img_next_png);    // assets/next.png
 LV_IMG_DECLARE(ui_img_home_icon_png);    // assets/home_icon.png
 LV_IMG_DECLARE(ui_img_117368779);    // assets/photo-camera.png
 

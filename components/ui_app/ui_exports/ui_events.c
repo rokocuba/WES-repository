@@ -13,6 +13,7 @@
 
 /* Defined in main camera capture module. */
 extern esp_err_t camera_capture_request_once(void);
+extern esp_err_t audio_play_request_once(void);
 
 static const char *TAG = "UI_EVENTS";
 static TaskHandle_t s_ui_capture_task = NULL;
@@ -47,7 +48,17 @@ void prev_song(lv_event_t * e)
 
 void pause_song(lv_event_t * e)
 {
-	// Your code here
+	(void)e;
+
+	esp_err_t err = audio_play_request_once();
+	if (err == ESP_ERR_INVALID_STATE) {
+		ESP_LOGI(TAG, "Audio playback already in progress");
+		return;
+	}
+
+	if (err != ESP_OK) {
+		ESP_LOGW(TAG, "Audio playback request failed: %s", esp_err_to_name(err));
+	}
 }
 
 void next_song(lv_event_t * e)

@@ -1,4 +1,6 @@
 //--------------------------------- INCLUDES ----------------------------------
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "freertos/FreeRTOS.h"
@@ -7,7 +9,10 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
+#include "driver/gpio.h"
+#include "driver/i2s_std.h"
 #include "driver/uart.h"
+#include "esp_spiffs.h"
 
 #include "gui.h"
 #include "ui.h"
@@ -36,6 +41,180 @@ static const char *TAG_MAIN = "MAIN";
 #define ML_UART_REPLY_TIMEOUT_MS 3000
 
 static bool s_ml_uart_ready = false;
+
+
+#define I2S_BCLK    GPIO_NUM_25 // btn4
+#define I2S_LRC     GPIO_NUM_33 // btn3
+#define I2S_DOUT    GPIO_NUM_32 // btn2
+#define SAMPLE_RATE 22050
+#define TAG         "audio"
+
+
+static i2s_chan_handle_t tx_chan;
+static TaskHandle_t s_audio_task = NULL;
+
+// WAV header is 44 bytes, this struct maps it
+typedef struct {
+    char     riff[4];        // "RIFF"
+    uint32_t file_size;
+    char     wave[4];        // "WAVE"
+    char     fmt[4];         // "fmt "
+    uint32_t fmt_size;
+    uint16_t audio_format;   // 1 = PCM
+    uint16_t num_channels;
+    uint32_t sample_rate;
+    uint32_t byte_rate;
+    uint16_t block_align;
+    uint16_t bits_per_sample;
+    char     data[4];        // "data"
+    uint32_t data_size;
+} wav_header_t;
+
+
+static void i2s_init(void)
+{
+    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_0, I2S_ROLE_MASTER);
+    chan_cfg.auto_clear = true;
+    i2s_new_channel(&chan_cfg, &tx_chan, NULL);
+
+    i2s_std_config_t std_cfg = {
+        .clk_cfg  = I2S_STD_CLK_DEFAULT_CONFIG(SAMPLE_RATE),
+        .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_MONO),
+        .gpio_cfg = {
+            .bclk = I2S_BCLK,
+            .ws   = I2S_LRC,
+            .dout = I2S_DOUT,
+            .din  = I2S_GPIO_UNUSED,
+            .invert_flags = {
+                .mclk_inv = false,
+                .bclk_inv = false,
+                .ws_inv   = false,
+            },
+        },
+    };
+
+    i2s_channel_init_std_mode(tx_chan, &std_cfg);
+    i2s_channel_enable(tx_chan);
+}
+
+static void spiffs_init(void)
+{
+    esp_vfs_spiffs_conf_t conf = {
+        .base_path       = "/spiffs",
+        .partition_label = NULL,
+        .max_files       = 5,
+        .format_if_mount_failed = false,
+    };
+    ESP_ERROR_CHECK(esp_vfs_spiffs_register(&conf));
+}
+static void play_wav(const char *path)
+{
+    FILE *f = fopen(path, "rb");
+    if (!f) {
+        ESP_LOGE(TAG, "Failed to open %s", path);
+        return;
+    }
+
+    // Read RIFF header
+    char riff[4];
+    uint32_t file_size;
+    char wave[4];
+    fread(riff, 1, 4, f);
+    fread(&file_size, 4, 1, f);
+    fread(wave, 1, 4, f);
+
+    if (memcmp(riff, "RIFF", 4) != 0 || memcmp(wave, "WAVE", 4) != 0) {
+        ESP_LOGE(TAG, "Not a WAV file");
+        fclose(f);
+        return;
+    }
+
+    // Scan chunks until we find fmt and data
+    uint16_t num_channels = 0, bits_per_sample = 0;
+    uint32_t sample_rate = 0, data_size = 0;
+    bool found_fmt = false, found_data = false;
+
+    while (!found_data) {
+        char chunk_id[4];
+        uint32_t chunk_size;
+        if (fread(chunk_id, 1, 4, f) != 4) break;
+        if (fread(&chunk_size, 4, 1, f) != 1) break;
+
+        if (memcmp(chunk_id, "fmt ", 4) == 0) {
+            uint16_t audio_format;
+            fread(&audio_format, 2, 1, f);
+            fread(&num_channels, 2, 1, f);
+            fread(&sample_rate, 4, 1, f);
+            fseek(f, 6, SEEK_CUR);  // skip byte rate + block align
+            fread(&bits_per_sample, 2, 1, f);
+            // skip any extra fmt bytes
+            if (chunk_size > 16) fseek(f, chunk_size - 16, SEEK_CUR);
+            found_fmt = true;
+
+        } else if (memcmp(chunk_id, "data", 4) == 0) {
+            data_size = chunk_size;
+            found_data = true;  // file position is now at audio data
+
+        } else {
+            // skip unknown chunk
+            fseek(f, chunk_size, SEEK_CUR);
+        }
+    }
+
+    if (!found_fmt || !found_data) {
+        ESP_LOGE(TAG, "Invalid WAV structure");
+        fclose(f);
+        return;
+    }
+
+    ESP_LOGI(TAG, "Playing %s - %uHz, %uch, %ubit, %u bytes",
+             path,
+             (unsigned)sample_rate,
+             (unsigned)num_channels,
+             (unsigned)bits_per_sample,
+             (unsigned)data_size);
+
+    // Stream audio data
+    const size_t chunk_size_buf = 1024;
+    uint8_t *buf = malloc(chunk_size_buf);
+    size_t bytes_read;
+    size_t bytes_written;
+    size_t total = 0;
+
+    while (total < data_size &&
+           (bytes_read = fread(buf, 1, chunk_size_buf, f)) > 0) {
+        i2s_channel_write(tx_chan, buf, bytes_read, &bytes_written, portMAX_DELAY);
+        total += bytes_read;
+    }
+
+    free(buf);
+    fclose(f);
+    ESP_LOGI(TAG, "Done - played %u bytes", (unsigned)total);
+}
+
+static void audio_task(void *arg)
+{
+    play_wav("/spiffs/output.wav");
+    s_audio_task = NULL;
+    vTaskDelete(NULL);
+}
+
+esp_err_t audio_play_request_once(void)
+{
+    if (s_audio_task != NULL) {
+        ESP_LOGI(TAG_MAIN, "Audio playback already in progress");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    BaseType_t ok = xTaskCreate(audio_task, "audio", 4096, NULL, 5, &s_audio_task);
+    if (ok != pdPASS) {
+        s_audio_task = NULL;
+        ESP_LOGE(TAG_MAIN, "Failed to create audio playback task");
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}
 
 extern SemaphoreHandle_t p_gui_semaphore;
 
@@ -302,6 +481,9 @@ void app_main() {
 
     // Register frame callback for custom processing/analytics/storage.
     camera_capture_set_frame_callback(on_camera_frame, NULL);
+
+    i2s_init();
+    spiffs_init();
 
     if (camera_capture_start(&cfg) != ESP_OK) {
         ESP_LOGE(TAG_MAIN, "Halting program. Capture module failed to initialize.");
