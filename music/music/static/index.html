@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WES Dashboard</title>
+<style>
+:root {
+  --bg-0: #0a0c10;
+  --bg-1: #0d1117;
+  --bg-2: #161b22;
+  --bg-3: #21262d;
+  --border: #30363d;
+  --border-light: #3d444d;
+  --text-1: #e6edf3;
+  --text-2: #7d8590;
+  --text-3: #484f58;
+  --blue: #58a6ff;
+  --green: #3fb950;
+  --orange: #d29922;
+  --red: #f85149;
+  --purple: #bc8cff;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-0); color: var(--text-1); min-height: 100vh; }
+::selection { background: var(--blue); color: #fff; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Header ── */
+.header { background: var(--bg-1); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 17px; font-weight: 700; letter-spacing: -.3px; }
+.logo span { color: var(--blue); }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.indicator { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; transition: background .3s; }
+.dot.on { background: var(--green); box-shadow: 0 0 8px rgba(63,185,80,.5); }
+
+/* ── Tabs ── */
+.tabs { background: var(--bg-1); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 0; }
+.tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; user-select: none; }
+.tab:hover { color: var(--text-1); }
+.tab.active { color: var(--text-1); border-bottom-color: var(--blue); }
+
+/* ── Layout ── */
+.content { max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
+.section { display: none; }
+.section.active { display: block; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ── Cards ── */
+.card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.card-head { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card-body { padding: 18px; }
+.card-body.flush { padding: 0; }
+
+/* ── Stats ── */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+@media (max-width: 768px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--text-2); margin-bottom: 8px; }
+.stat-val { font-size: 26px; font-weight: 700; }
+.stat-val.c-green { color: var(--green); }
+.stat-val.c-blue { color: var(--blue); }
+.stat-val.c-orange { color: var(--orange); }
+.stat-val.c-purple { color: var(--purple); }
+
+/* ── Badges ── */
+.badge { font-size: 11px; padding: 2px 9px; border-radius: 12px; font-weight: 500; }
+.badge-green { background: rgba(63,185,80,.15); color: var(--green); }
+.badge-blue { background: rgba(88,166,255,.15); color: var(--blue); }
+.badge-orange { background: rgba(210,153,34,.15); color: var(--orange); }
+.badge-red { background: rgba(248,81,73,.15); color: var(--red); }
+.badge-muted { background: var(--bg-3); color: var(--text-2); }
+
+/* ── Buttons ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-3); color: var(--text-1); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.btn:hover { background: var(--border); border-color: var(--border-light); }
+.btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
+.btn-primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+.btn-primary:hover { background: #388bfd; }
+.btn-green { background: #238636; border-color: #238636; color: #fff; }
+.btn-green:hover { background: #2ea043; }
+.btn-red { background: #da3633; border-color: #da3633; color: #fff; }
+.btn-red:hover { background: #f85149; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-lg { padding: 10px 22px; font-size: 14px; }
+
+/* ── Inputs ── */
+.input { width: 100%; padding: 8px 12px; background: var(--bg-1); border: 1px solid var(--border); border-radius: 6px; color: var(--text-1); font-size: 13px; outline: none; transition: border-color .15s; }
+.input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(88,166,255,.15); }
+.input::placeholder { color: var(--text-3); }
+.input-group { display: flex; gap: 8px; }
+.input-group .input { flex: 1; }
+
+/* ── Image Gallery ── */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 16px; }
+.gallery-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); background: var(--bg-1); transition: transform .15s, border-color .15s; }
+.gallery-item:hover { transform: scale(1.03); border-color: var(--blue); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-item .overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 8px; background: linear-gradient(transparent, rgba(0,0,0,.8)); font-size: 10px; color: var(--text-2); }
+.gallery-empty { padding: 48px; text-align: center; color: var(--text-3); font-size: 13px; }
+
+/* ── Sound List ── */
+.sound-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); transition: background .1s; }
+.sound-item:last-child { border-bottom: none; }
+.sound-item:hover { background: var(--bg-3); }
+.sound-icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(88,166,255,.1); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.sound-info { flex: 1; min-width: 0; }
+.sound-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sound-meta { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+.sound-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.sound-playing { background: rgba(63,185,80,.08); }
+
+/* ── Log ── */
+.log-area { max-height: 300px; overflow-y: auto; font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace; font-size: 12px; }
+.log-line { padding: 4px 16px; border-bottom: 1px solid rgba(48,54,61,.5); display: flex; gap: 10px; }
+.log-time { color: var(--text-3); white-space: nowrap; min-width: 70px; }
+.log-cmd { color: var(--purple); min-width: 110px; }
+.log-msg { color: var(--text-2); word-break: break-all; }
+
+/* ── Lightbox ── */
+.lightbox { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.85); backdrop-filter: blur(8px); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,.5); }
+
+/* ── Misc ── */
+.empty { padding: 32px; text-align: center; color: var(--text-3); font-size: 13px; }
+.mb { margin-bottom: 16px; }
+.mt { margin-top: 16px; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.pulse { animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.fade-in { animation: fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">WES <span>Dashboard</span></div>
+  <div class="header-right">
+    <div class="indicator"><div class="dot" id="dotDevice"></div><span id="deviceLabel">Device offline</span></div>
+    <div class="indicator"><div class="dot" id="dotWs"></div><span id="wsLabel">Connecting</span></div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" data-tab="health">Health</div>
+  <div class="tab" data-tab="camera">Camera</div>
+  <div class="tab" data-tab="audio">Audio</div>
+  <div class="tab" data-tab="log">Log</div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Health Section -->
+  <div class="section active" id="sec-health">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Uptime</div>
+        <div class="stat-val c-green" id="sUptime">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Free Heap</div>
+        <div class="stat-val c-blue" id="sHeap">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Min Heap</div>
+        <div class="stat-val c-orange" id="sMinHeap">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Last Ping</div>
+        <div class="stat-val c-purple" id="sPing" style="font-size:16px">--</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">Status <span class="badge badge-muted" id="healthBadge">waiting</span></div>
+      <div class="card-body" id="healthDetail" style="font-size:13px;color:var(--text-2)">
+        Waiting for first health check...
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Section -->
+  <div class="section" id="sec-camera">
+    <div class="flex-between mb">
+      <button class="btn btn-primary btn-lg" id="btnCapture" onclick="captureImage()">Capture Image</button>
+      <span class="badge badge-muted" id="camBadge">idle</span>
+    </div>
+    <div class="card">
+      <div class="card-head">Image Gallery <span class="badge badge-blue" id="imgCount">0</span></div>
+      <div class="card-body flush" id="galleryWrap">
+        <div class="gallery-empty">No images captured yet</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Section -->
+  <div class="section" id="sec-audio">
+    <div class="grid-2">
+      <!-- Sound Library -->
+      <div class="card">
+        <div class="card-head">Sound Library <span class="badge badge-blue" id="soundCount">0</span></div>
+        <div class="card-body">
+          <div class="input-group mb">
+            <input class="input" id="soundUrl" type="url" placeholder="Paste URL (YouTube, SoundCloud, or direct MP3 link)...">
+            <button class="btn btn-primary" id="btnDownload" onclick="downloadSound()">Download</button>
+          </div>
+          <div id="soundList">
+            <div class="empty">No sounds in library</div>
+          </div>
+        </div>
+      </div>
+      <!-- Mic / Playback -->
+      <div class="card">
+        <div class="card-head">Live Microphone <span class="badge badge-muted" id="micBadge">off</span></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--text-2);margin-bottom:14px">
+            Stream live microphone audio to the ESP32 device.
+          </p>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-green" id="btnMicStart" onclick="micStart()">Start Mic</button>
+            <button class="btn btn-red" id="btnMicStop" onclick="micStop()" disabled>Stop</button>
+            <span style="font-size:12px;color:var(--text-2)" id="micStatus"></span>
+          </div>
+        </div>
+        <div class="card-head" style="margin-top:0">Now Playing <span class="badge badge-muted" id="playBadge">none</span></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--text-2)" id="playStatus">No sound playing</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+            <button class="btn btn-red btn-sm" id="btnStopSound" onclick="stopSound()" disabled>Stop Playback</button>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2);cursor:pointer;user-select:none">
+              <input type="checkbox" id="chkLoop" onchange="toggleLoop()" style="accent-color:var(--blue)"> Loop
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log Section -->
+  <div class="section" id="sec-log">
+    <div class="card">
+      <div class="card-head">Event Log <span class="badge badge-blue" id="logCount">0</span>
+        <button class="btn btn-sm" style="margin-left:auto" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="card-body flush">
+        <div class="log-area" id="logArea"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="">
+</div>
+
+<script>
+// ── State ──
+let ws, logEntries = 0;
+let audioCtx, micStream, audioProcessor, micStreaming = false;
+let loopEnabled = false, currentSoundFile = '';
+const wsUrl = `ws://${location.host}/ws/web`;
+
+// ── Tabs ──
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('sec-' + t.dataset.tab).classList.add('active');
+  });
+});
+
+// ── WebSocket ──
+function connect() {
+  ws = new WebSocket(wsUrl);
+  ws.onopen = () => {
+    el('dotWs').classList.add('on');
+    el('wsLabel').textContent = 'Connected';
+    loadGallery();
+    loadSounds();
+  };
+  ws.onclose = () => {
+    el('dotWs').classList.remove('on');
+    el('wsLabel').textContent = 'Reconnecting...';
+    setTimeout(connect, 2000);
+  };
+  ws.onmessage = e => handleMsg(JSON.parse(e.data));
+}
+
+function send(obj) { if (ws?.readyState === 1) ws.send(JSON.stringify(obj)); }
+function el(id) { return document.getElementById(id); }
+
+function handleMsg(msg) {
+  if (msg.type === 'device_status') {
+    const on = msg.connected;
+    el('dotDevice').classList.toggle('on', on);
+    el('deviceLabel').textContent = on ? 'Device online' : 'Device offline';
+    return;
+  }
+  if (msg.type === 'sound_status') {
+    updatePlayStatus(msg);
+    return;
+  }
+
+  const cmd = msg.cmd, r = msg.result || {};
+  addLog(cmd, r);
+
+  if (cmd === 'healthcheck' && r.status === 'ok') updateHealth(r);
+  if (cmd === 'capture_image') handleCaptureResult(r);
+  if (cmd === 'audio_start') {
+    el('micBadge').textContent = 'streaming';
+    el('micBadge').className = 'badge badge-green';
+  }
+  if (cmd === 'audio_stop') {
+    el('micBadge').textContent = 'off';
+    el('micBadge').className = 'badge badge-muted';
+  }
+}
+
+// ── Health ──
+function updateHealth(r) {
+  const secs = Math.floor(r.uptime_ms / 1000);
+  const h = Math.floor(secs/3600), m = Math.floor((secs%3600)/60), s = secs%60;
+  el('sUptime').textContent = `${h}h ${m}m ${s}s`;
+  el('sHeap').textContent = (r.free_heap/1024).toFixed(1) + ' KB';
+  el('sMinHeap').textContent = (r.min_heap/1024).toFixed(1) + ' KB';
+  el('sPing').textContent = new Date().toLocaleTimeString();
+  el('healthBadge').textContent = 'ok';
+  el('healthBadge').className = 'badge badge-green';
+  el('healthDetail').innerHTML = `Device is healthy. Free heap is ${(r.free_heap/1024).toFixed(1)} KB, minimum recorded is ${(r.min_heap/1024).toFixed(1)} KB. Uptime: ${h} hours, ${m} minutes, ${s} seconds.`;
+}
+
+// ── Camera ──
+function captureImage() {
+  el('btnCapture').disabled = true;
+  el('camBadge').textContent = 'capturing...';
+  el('camBadge').className = 'badge badge-orange pulse';
+  send({cmd: 'capture_image'});
+}
+
+function handleCaptureResult(r) {
+  el('btnCapture').disabled = false;
+  if (r.data) {
+    el('camBadge').textContent = 'captured';
+    el('camBadge').className = 'badge badge-green';
+    loadGallery();
+  } else {
+    el('camBadge').textContent = 'error';
+    el('camBadge').className = 'badge badge-red';
+  }
+}
+
+async function loadGallery() {
+  try {
+    const res = await fetch('/api/images');
+    const images = await res.json();
+    el('imgCount').textContent = images.length;
+    if (images.length === 0) {
+      el('galleryWrap').innerHTML = '<div class="gallery-empty">No images captured yet</div>';
+      return;
+    }
+    let html = '<div class="gallery">';
+    for (const img of images) {
+      const url = `/media/images/${img.name}`;
+      const ts = new Date(img.timestamp).toLocaleString();
+      html += `<div class="gallery-item fade-in" onclick="openLightbox('${url}')">
+        <img src="${url}" loading="lazy">
+        <div class="overlay">${ts}</div>
+      </div>`;
+    }
+    html += '</div>';
+    el('galleryWrap').innerHTML = html;
+  } catch(e) {}
+}
+
+function openLightbox(url) {
+  el('lightboxImg').src = url;
+  el('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  el('lightbox').classList.remove('open');
+}
+
+// ── Sounds ──
+async function loadSounds() {
+  try {
+    const res = await fetch('/api/sounds');
+    const sounds = await res.json();
+    el('soundCount').textContent = sounds.length;
+    if (sounds.length === 0) {
+      el('soundList').innerHTML = '<div class="empty">No sounds in library</div>';
+      return;
+    }
+    let html = '';
+    for (const s of sounds) {
+      const size = s.size > 1048576 ? (s.size/1048576).toFixed(1)+' MB' : (s.size/1024).toFixed(0)+' KB';
+      html += `<div class="sound-item" id="sound-${CSS.escape(s.name)}">
+        <div class="sound-icon">&#9835;</div>
+        <div class="sound-info">
+          <div class="sound-name">${esc(s.name)}</div>
+          <div class="sound-meta">${size}</div>
+        </div>
+        <div class="sound-actions">
+          <button class="btn btn-sm btn-green" onclick="playSound('${esc(s.name)}')">Play</button>
+          <button class="btn btn-sm" onclick="previewSound('${esc(s.name)}')">Preview</button>
+          <button class="btn btn-sm btn-red" onclick="deleteSound('${esc(s.name)}')">Delete</button>
+        </div>
+      </div>`;
+    }
+    el('soundList').innerHTML = html;
+  } catch(e) {}
+}
+
+async function downloadSound() {
+  const url = el('soundUrl').value.trim();
+  if (!url) return;
+  const btn = el('btnDownload');
+  btn.disabled = true;
+  btn.textContent = 'Downloading...';
+  try {
+    const res = await fetch('/api/sounds', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({url})
+    });
+    const data = await res.json();
+    if (data.error) { alert('Error: ' + data.error); }
+    else { el('soundUrl').value = ''; loadSounds(); }
+  } catch(e) { alert('Download failed'); }
+  btn.disabled = false;
+  btn.textContent = 'Download';
+}
+
+async function deleteSound(name) {
+  if (!confirm(`Delete "${name}"?`)) return;
+  await fetch(`/api/sounds/${encodeURIComponent(name)}`, {method: 'DELETE'});
+  loadSounds();
+}
+
+function playSound(name) {
+  currentSoundFile = name;
+  send({cmd: 'play_sound', filename: name});
+}
+
+function stopSound() {
+  currentSoundFile = '';
+  send({cmd: 'stop_sound'});
+}
+
+function toggleLoop() {
+  loopEnabled = el('chkLoop').checked;
+}
+
+function previewSound(name) {
+  const audio = new Audio(`/media/sounds/${encodeURIComponent(name)}`);
+  audio.play();
+}
+
+function updatePlayStatus(msg) {
+  const s = msg.status;
+  const name = msg.filename || '';
+  if (s === 'playing') {
+    el('playBadge').textContent = name + (loopEnabled ? ' (loop)' : '');
+    el('playBadge').className = 'badge badge-green';
+    el('playStatus').textContent = `Playing: ${name}`;
+    el('btnStopSound').disabled = false;
+  } else if (s === 'converting') {
+    el('playBadge').textContent = 'converting...';
+    el('playBadge').className = 'badge badge-orange pulse';
+    el('playStatus').textContent = `Converting: ${name}`;
+  } else {
+    if (loopEnabled && currentSoundFile) {
+      el('playBadge').textContent = 'restarting...';
+      el('playBadge').className = 'badge badge-orange pulse';
+      el('playStatus').textContent = `Looping: ${currentSoundFile}`;
+      setTimeout(() => playSound(currentSoundFile), 500);
+    } else {
+      el('playBadge').textContent = 'none';
+      el('playBadge').className = 'badge badge-muted';
+      el('playStatus').textContent = 'No sound playing';
+      el('btnStopSound').disabled = true;
+      currentSoundFile = '';
+    }
+  }
+}
+
+// ── Microphone ──
+async function micStart() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({audio:{sampleRate:22050,channelCount:2}});
+    audioCtx = new AudioContext({sampleRate:22050});
+    const source = audioCtx.createMediaStreamSource(micStream);
+    audioProcessor = audioCtx.createScriptProcessor(2048,1,1);
+    audioProcessor.onaudioprocess = e => {
+      if (!micStreaming) return;
+      const f32 = e.inputBuffer.getChannelData(0);
+      const i16 = new Int16Array(f32.length);
+      for (let i=0;i<f32.length;i++) i16[i]=Math.max(-32768,Math.min(32767,f32[i]*32768));
+      const bytes = new Uint8Array(i16.buffer);
+      let bin='';
+      for (let i=0;i<bytes.length;i+=512)
+        bin += String.fromCharCode.apply(null, bytes.subarray(i,Math.min(i+512,bytes.length)));
+      send({cmd:'audio_data',data:btoa(bin)});
+    };
+    source.connect(audioProcessor);
+    audioProcessor.connect(audioCtx.destination);
+    micStreaming = true;
+    send({cmd:'audio_start'});
+    el('btnMicStart').disabled = true;
+    el('btnMicStop').disabled = false;
+    el('micStatus').textContent = 'Streaming...';
+  } catch(e) {
+    el('micStatus').textContent = 'Error: ' + e.message;
+  }
+}
+
+function micStop() {
+  micStreaming = false;
+  send({cmd:'audio_stop'});
+  if (audioProcessor) audioProcessor.disconnect();
+  if (micStream) micStream.getTracks().forEach(t=>t.stop());
+  if (audioCtx) audioCtx.close();
+  audioProcessor = null; micStream = null; audioCtx = null;
+  el('btnMicStart').disabled = false;
+  el('btnMicStop').disabled = true;
+  el('micStatus').textContent = '';
+}
+
+// ── Log ──
+function addLog(cmd, data) {
+  logEntries++;
+  el('logCount').textContent = logEntries;
+  const area = el('logArea');
+  const d = document.createElement('div');
+  d.className = 'log-line';
+  const now = new Date().toLocaleTimeString();
+  const summary = JSON.stringify(data).slice(0,150);
+  d.innerHTML = `<span class="log-time">${now}</span><span class="log-cmd">${esc(cmd)}</span><span class="log-msg">${esc(summary)}</span>`;
+  area.prepend(d);
+  if (area.children.length > 200) area.lastChild.remove();
+}
+
+function clearLog() {
+  el('logArea').innerHTML = '';
+  logEntries = 0;
+  el('logCount').textContent = '0';
+}
+
+// ── Helpers ──
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+// ── Init ──
+connect();
+</script>
+</body>
+</html>
