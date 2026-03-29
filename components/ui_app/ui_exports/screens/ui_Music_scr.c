@@ -102,6 +102,7 @@ void ui_Music_scr_screen_init(void)
     lv_obj_clear_flag(ui_Button2, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Image5 = lv_img_create(ui_Button2);
+    lv_img_set_src(ui_Image5, &ui_img_previous_png);
     lv_obj_set_width(ui_Image5, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image5, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_x(ui_Image5, -3);
@@ -120,6 +121,7 @@ void ui_Music_scr_screen_init(void)
     lv_obj_clear_flag(ui_Button3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Image4 = lv_img_create(ui_Button3);
+    lv_img_set_src(ui_Image4, &ui_img_pause_png);
     lv_obj_set_width(ui_Image4, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image4, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_align(ui_Image4, LV_ALIGN_CENTER);
@@ -136,6 +138,7 @@ void ui_Music_scr_screen_init(void)
     lv_obj_clear_flag(ui_Button4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Image3 = lv_img_create(ui_Button4);
+    lv_img_set_src(ui_Image3, &ui_img_next_png);
     lv_obj_set_width(ui_Image3, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image3, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_align(ui_Image3, LV_ALIGN_CENTER);

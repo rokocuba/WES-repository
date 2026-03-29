@@ -41,6 +41,7 @@ void ui_Number_scr_screen_init(void)
     lv_obj_set_style_bg_img_recolor_opa(ui_Button5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Image6 = lv_img_create(ui_Button5);
+    lv_img_set_src(ui_Image6, &ui_img_117368779);
     lv_obj_set_width(ui_Image6, LV_SIZE_CONTENT);   /// 64
     lv_obj_set_height(ui_Image6, LV_SIZE_CONTENT);    /// 64
     lv_obj_set_align(ui_Image6, LV_ALIGN_CENTER);
