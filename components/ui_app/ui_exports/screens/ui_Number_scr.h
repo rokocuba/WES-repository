@@ -16,9 +16,9 @@ extern void ui_Number_scr_screen_destroy(void);
 extern lv_obj_t * ui_Number_scr;
 extern void ui_event_Button5(lv_event_t * e);
 extern lv_obj_t * ui_Button5;
-extern lv_obj_t * ui_Image8;
+extern lv_obj_t * ui_Image6;
 extern lv_obj_t * ui_Label2;
-extern lv_obj_t * ui_Image10;
+extern lv_obj_t * ui_camImage;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

@@ -1,4 +1,4 @@
-SET(SOURCES components/ui_comp_image4.c
+SET(SOURCES components/ui_comp_temp.c
     components/ui_comp.c
     screens/ui_Home_Scr.c
     screens/ui_Music_scr.c
@@ -7,7 +7,6 @@ SET(SOURCES components/ui_comp_image4.c
     ui.c
     components/ui_comp_hook.c
     ui_helpers.c
-    ui_events.c
-    images/ui_img_home_icon_png.c)
+    ui_events.c)
 
 add_library(ui ${SOURCES})

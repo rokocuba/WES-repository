@@ -6,8 +6,6 @@
 #include "../ui.h"
 
 lv_obj_t * ui_Music_scr = NULL;
-lv_obj_t * ui_Home_Btn_Color = NULL;
-lv_obj_t * ui_Home_Img_C = NULL;
 lv_obj_t * ui_LED_color_panel = NULL;
 lv_obj_t * ui_LED_color_label = NULL;
 lv_obj_t * ui_songlabel = NULL;
@@ -18,24 +16,6 @@ lv_obj_t * ui_Image4 = NULL;
 lv_obj_t * ui_Button4 = NULL;
 lv_obj_t * ui_Image3 = NULL;
 // event funtions
-void ui_event_Home_Btn_Color(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Home_Scr, LV_SCR_LOAD_ANIM_OVER_RIGHT, 500, 0, &ui_Home_Scr_screen_init);
-    }
-}
-
-void ui_event_Home_Img_C(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Home_Scr, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Home_Scr_screen_init);
-    }
-}
-
 void ui_event_Button2(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -63,32 +43,21 @@ void ui_event_Button4(lv_event_t * e)
     }
 }
 
+void ui_event_Image3(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        NextPjesma(e);
+    }
+}
+
 // build funtions
 
 void ui_Music_scr_screen_init(void)
 {
     ui_Music_scr = lv_obj_create(NULL);
     lv_obj_clear_flag(ui_Music_scr, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-
-    ui_Home_Btn_Color = lv_btn_create(ui_Music_scr);
-    lv_obj_set_width(ui_Home_Btn_Color, 36);
-    lv_obj_set_height(ui_Home_Btn_Color, 31);
-    lv_obj_set_x(ui_Home_Btn_Color, -133);
-    lv_obj_set_y(ui_Home_Btn_Color, 94);
-    lv_obj_set_align(ui_Home_Btn_Color, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Home_Btn_Color, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_Home_Btn_Color, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_obj_set_style_bg_color(ui_Home_Btn_Color, lv_color_hex(0x6AC6A4), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Home_Btn_Color, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_Home_Img_C = lv_img_create(ui_Home_Btn_Color);
-    lv_img_set_src(ui_Home_Img_C, &ui_img_home_icon_png);
-    lv_obj_set_width(ui_Home_Img_C, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Home_Img_C, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_align(ui_Home_Img_C, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Home_Img_C, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Home_Img_C, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
-    lv_img_set_zoom(ui_Home_Img_C, 50);
 
     ui_LED_color_panel = lv_obj_create(ui_Music_scr);
     lv_obj_set_width(ui_LED_color_panel, 139);
@@ -173,10 +142,9 @@ void ui_Music_scr_screen_init(void)
     lv_obj_add_flag(ui_Image3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_Image3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    lv_obj_add_event_cb(ui_Home_Img_C, ui_event_Home_Img_C, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_Home_Btn_Color, ui_event_Home_Btn_Color, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button2, ui_event_Button2, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button3, ui_event_Button3, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Image3, ui_event_Image3, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Button4, ui_event_Button4, LV_EVENT_ALL, NULL);
 
 }
@@ -187,8 +155,6 @@ void ui_Music_scr_screen_destroy(void)
 
     // NULL screen variables
     ui_Music_scr = NULL;
-    ui_Home_Btn_Color = NULL;
-    ui_Home_Img_C = NULL;
     ui_LED_color_panel = NULL;
     ui_LED_color_label = NULL;
     ui_songlabel = NULL;

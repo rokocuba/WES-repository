@@ -1,6 +1,6 @@
 {
-    "uiExportFolderPath": "C:\\Users\\david\\Desktop\\WES\\WES-repository\\components\\ui_app\\ui_exports",
-    "projectExportFolderPath": "C:\\Users\\david\\Desktop\\WES\\WES-repository\\components\\ui_app\\squareline\\project",
+    "uiExportFolderPath": "/home/ian/dev/wes2026/Byte-Lab-Development-Kit/components/ui_app/ui_exports",
+    "projectExportFolderPath": "/home/ian/dev/wes2026/Byte-Lab-Development-Kit/components/ui_app/squareline/project",
     "drive_stdio": "-",
     "drive_stdio_path": "",
     "drive_posix": "-",

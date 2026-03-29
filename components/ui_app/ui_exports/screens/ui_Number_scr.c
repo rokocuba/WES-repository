@@ -7,9 +7,9 @@
 
 lv_obj_t * ui_Number_scr = NULL;
 lv_obj_t * ui_Button5 = NULL;
-lv_obj_t * ui_Image8 = NULL;
+lv_obj_t * ui_Image6 = NULL;
 lv_obj_t * ui_Label2 = NULL;
-lv_obj_t * ui_Image10 = NULL;
+lv_obj_t * ui_camImage = NULL;
 // event funtions
 void ui_event_Button5(lv_event_t * e)
 {
@@ -40,14 +40,12 @@ void ui_Number_scr_screen_init(void)
     lv_obj_set_style_bg_img_recolor(ui_Button5, lv_color_hex(0x4040FF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_img_recolor_opa(ui_Button5, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Image8 = lv_img_create(ui_Button5);
-    lv_obj_set_width(ui_Image8, LV_SIZE_CONTENT);   /// 64
-    lv_obj_set_height(ui_Image8, LV_SIZE_CONTENT);    /// 64
-    lv_obj_set_x(ui_Image8, 0);
-    lv_obj_set_y(ui_Image8, 1);
-    lv_obj_set_align(ui_Image8, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Image8, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Image8, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_Image6 = lv_img_create(ui_Button5);
+    lv_obj_set_width(ui_Image6, LV_SIZE_CONTENT);   /// 64
+    lv_obj_set_height(ui_Image6, LV_SIZE_CONTENT);    /// 64
+    lv_obj_set_align(ui_Image6, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image6, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image6, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Label2 = lv_label_create(ui_Number_scr);
     lv_obj_set_width(ui_Label2, lv_pct(50));
@@ -64,14 +62,14 @@ void ui_Number_scr_screen_init(void)
     lv_obj_set_style_bg_color(ui_Label2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_Image10 = lv_img_create(ui_Number_scr);
-    lv_obj_set_width(ui_Image10, LV_SIZE_CONTENT);   /// 160
-    lv_obj_set_height(ui_Image10, LV_SIZE_CONTENT);    /// 120
-    lv_obj_set_x(ui_Image10, -89);
-    lv_obj_set_y(ui_Image10, -65);
-    lv_obj_set_align(ui_Image10, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_Image10, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_Image10, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_camImage = lv_img_create(ui_Number_scr);
+    lv_obj_set_width(ui_camImage, LV_SIZE_CONTENT);   /// 40
+    lv_obj_set_height(ui_camImage, LV_SIZE_CONTENT);    /// 40
+    lv_obj_set_x(ui_camImage, 0);
+    lv_obj_set_y(ui_camImage, -32);
+    lv_obj_set_align(ui_camImage, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_camImage, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_camImage, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_add_event_cb(ui_Button5, ui_event_Button5, LV_EVENT_ALL, NULL);
 
@@ -84,8 +82,8 @@ void ui_Number_scr_screen_destroy(void)
     // NULL screen variables
     ui_Number_scr = NULL;
     ui_Button5 = NULL;
-    ui_Image8 = NULL;
+    ui_Image6 = NULL;
     ui_Label2 = NULL;
-    ui_Image10 = NULL;
+    ui_camImage = NULL;
 
 }

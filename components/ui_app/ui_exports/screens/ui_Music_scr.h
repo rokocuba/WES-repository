@@ -14,10 +14,6 @@ extern "C" {
 extern void ui_Music_scr_screen_init(void);
 extern void ui_Music_scr_screen_destroy(void);
 extern lv_obj_t * ui_Music_scr;
-extern void ui_event_Home_Btn_Color(lv_event_t * e);
-extern lv_obj_t * ui_Home_Btn_Color;
-extern void ui_event_Home_Img_C(lv_event_t * e);
-extern lv_obj_t * ui_Home_Img_C;
 extern lv_obj_t * ui_LED_color_panel;
 extern lv_obj_t * ui_LED_color_label;
 extern lv_obj_t * ui_songlabel;
@@ -29,6 +25,7 @@ extern lv_obj_t * ui_Button3;
 extern lv_obj_t * ui_Image4;
 extern void ui_event_Button4(lv_event_t * e);
 extern lv_obj_t * ui_Button4;
+extern void ui_event_Image3(lv_event_t * e);
 extern lv_obj_t * ui_Image3;
 // CUSTOM VARIABLES
 

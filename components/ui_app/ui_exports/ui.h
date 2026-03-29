@@ -17,16 +17,13 @@ extern "C" {
 #include "components/ui_comp_hook.h"
 #include "ui_events.h"
 
-
 ///////////////////// SCREENS ////////////////////
-
 #include "screens/ui_Home_Scr.h"
 #include "screens/ui_Music_scr.h"
 #include "screens/ui_Number_scr.h"
 #include "screens/ui_Vlaga_scr.h"
 
 ///////////////////// VARIABLES ////////////////////
-
 extern lv_anim_t * SpinAndLargen_Animation(lv_obj_t * TargetObject, int delay);
 extern lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay);
 extern lv_anim_t * MoveColorToCenter_Animation(lv_obj_t * TargetObject, int delay);
@@ -35,11 +32,7 @@ extern lv_anim_t * HideBtn_Animation(lv_obj_t * TargetObject, int delay);
 extern lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 
 // EVENTS
-
 extern lv_obj_t * ui____initial_actions0;
-
-// IMAGES AND IMAGE SETS
-LV_IMG_DECLARE(ui_img_home_icon_png);    // assets/home_icon.png
 
 // UI INIT
 void ui_init(void);

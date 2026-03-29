@@ -34,3 +34,8 @@ void slikaj_sliku(lv_event_t * e)
 {
 	// Your code here
 }
+
+void NextPjesma(lv_event_t * e)
+{
+	// Your code here
+}
