@@ -9,7 +9,7 @@ lv_obj_t * ui_Number_scr = NULL;
 lv_obj_t * ui_Button5 = NULL;
 lv_obj_t * ui_Image6 = NULL;
 lv_obj_t * ui_Label2 = NULL;
-lv_obj_t * ui_SlikaBrojeva = NULL;
+lv_obj_t * ui_camImage = NULL;
 lv_obj_t * ui_Button6 = NULL;
 lv_obj_t * ui_Image7 = NULL;
 // event funtions
@@ -65,7 +65,7 @@ void ui_Number_scr_screen_init(void)
     lv_obj_set_width(ui_Label2, lv_pct(50));
     lv_obj_set_height(ui_Label2, lv_pct(20));
     lv_obj_set_x(ui_Label2, -59);
-    lv_obj_set_y(ui_Label2, 73);
+    lv_obj_set_y(ui_Label2, 72);
     lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
     lv_label_set_text(ui_Label2, "0");
     lv_obj_set_style_text_letter_space(ui_Label2, 5, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -76,14 +76,14 @@ void ui_Number_scr_screen_init(void)
     lv_obj_set_style_bg_color(ui_Label2, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_SlikaBrojeva = lv_img_create(ui_Number_scr);
-    lv_obj_set_width(ui_SlikaBrojeva, LV_SIZE_CONTENT);   /// 40
-    lv_obj_set_height(ui_SlikaBrojeva, LV_SIZE_CONTENT);    /// 40
-    lv_obj_set_x(ui_SlikaBrojeva, -84);
-    lv_obj_set_y(ui_SlikaBrojeva, -60);
-    lv_obj_set_align(ui_SlikaBrojeva, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_SlikaBrojeva, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_SlikaBrojeva, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_camImage = lv_img_create(ui_Number_scr);
+    lv_obj_set_width(ui_camImage, LV_SIZE_CONTENT);   /// 40
+    lv_obj_set_height(ui_camImage, LV_SIZE_CONTENT);    /// 40
+    lv_obj_set_x(ui_camImage, -57);
+    lv_obj_set_y(ui_camImage, -46);
+    lv_obj_set_align(ui_camImage, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_camImage, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_camImage, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Button6 = lv_btn_create(ui_Number_scr);
     lv_obj_set_width(ui_Button6, 75);
@@ -98,7 +98,7 @@ void ui_Number_scr_screen_init(void)
     lv_img_set_src(ui_Image7, &ui_img_home_icon_png);
     lv_obj_set_width(ui_Image7, LV_SIZE_CONTENT);   /// 100
     lv_obj_set_height(ui_Image7, LV_SIZE_CONTENT);    /// 86
-    lv_obj_set_x(ui_Image7, 2);
+    lv_obj_set_x(ui_Image7, 1);
     lv_obj_set_y(ui_Image7, -1);
     lv_obj_set_align(ui_Image7, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Image7, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
@@ -119,7 +119,7 @@ void ui_Number_scr_screen_destroy(void)
     ui_Button5 = NULL;
     ui_Image6 = NULL;
     ui_Label2 = NULL;
-    ui_SlikaBrojeva = NULL;
+    ui_camImage = NULL;
     ui_Button6 = NULL;
     ui_Image7 = NULL;
 

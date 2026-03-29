@@ -5,6 +5,31 @@
 
 #include "ui.h"
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+#include "esp_log.h"
+#include "esp_err.h"
+
+/* Defined in main camera capture module. */
+extern esp_err_t camera_capture_request_once(void);
+
+static const char *TAG = "UI_EVENTS";
+static TaskHandle_t s_ui_capture_task = NULL;
+
+static void ui_capture_request_task(void *pvParameters)
+{
+	(void)pvParameters;
+
+	esp_err_t err = camera_capture_request_once();
+	if (err != ESP_OK) {
+		ESP_LOGW(TAG, "UI capture request failed: %s", esp_err_to_name(err));
+	}
+
+	s_ui_capture_task = NULL;
+	vTaskDelete(NULL);
+}
+
 void dark_mode_on(lv_event_t * e)
 {
 	// Your code here
@@ -32,7 +57,23 @@ void next_song(lv_event_t * e)
 
 void slikaj_sliku(lv_event_t * e)
 {
-	// Your code here
+	(void)e;
+
+	if (s_ui_capture_task != NULL) {
+		ESP_LOGI(TAG, "Capture already in progress, ignoring Button5 click");
+		return;
+	}
+
+	BaseType_t ok = xTaskCreate(ui_capture_request_task,
+	                            "ui_capture",
+	                            8192,
+	                            NULL,
+	                            5,
+	                            &s_ui_capture_task);
+	if (ok != pdPASS) {
+		s_ui_capture_task = NULL;
+		ESP_LOGE(TAG, "Failed to spawn UI capture task");
+	}
 }
 
 void NextPjesma(lv_event_t * e)

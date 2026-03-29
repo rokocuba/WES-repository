@@ -17,7 +17,10 @@ extern lv_obj_t * ui_Vlaga_scr;
 extern lv_obj_t * ui_Label3;
 extern lv_obj_t * ui_Label4;
 extern lv_obj_t * ui_Vlagavalue;
-extern lv_obj_t * ui_Label6;
+extern lv_obj_t * ui_temp;
+extern void ui_event_Button9(lv_event_t * e);
+extern lv_obj_t * ui_Button9;
+extern lv_obj_t * ui_Image10;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

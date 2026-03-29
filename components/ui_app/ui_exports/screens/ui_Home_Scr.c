@@ -10,7 +10,7 @@ lv_obj_t * ui_BTN_Num = NULL;
 lv_obj_t * ui_Image8 = NULL;
 lv_obj_t * ui_Settings_Btn_Home = NULL;
 lv_obj_t * ui_Settings_Icon_Home = NULL;
-lv_obj_t * ui_temp = NULL;
+lv_obj_t * ui_welcome = NULL;
 lv_obj_t * ui_Button1 = NULL;
 lv_obj_t * ui_Image2 = NULL;
 // event funtions
@@ -28,7 +28,7 @@ void ui_event_Settings_Btn_Home(lv_event_t * e)
     lv_event_code_t event_code = lv_event_get_code(e);
 
     if(event_code == LV_EVENT_CLICKED) {
-        _ui_screen_change(&ui_Number_scr, LV_SCR_LOAD_ANIM_FADE_ON, 500, 1000, &ui_Number_scr_screen_init);
+        _ui_screen_change(&ui_Music_scr, LV_SCR_LOAD_ANIM_FADE_ON, 500, 1000, &ui_Music_scr_screen_init);
     }
 }
 
@@ -121,16 +121,16 @@ void ui_Home_Scr_screen_init(void)
     lv_obj_clear_flag(ui_Settings_Icon_Home, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
     lv_img_set_zoom(ui_Settings_Icon_Home, 150);
 
-    ui_temp = lv_label_create(ui_Home_Scr);
-    lv_obj_set_width(ui_temp, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_temp, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_temp, 1);
-    lv_obj_set_y(ui_temp, -85);
-    lv_obj_set_align(ui_temp, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_temp, "Welcome Back");
-    lv_obj_set_style_text_color(ui_temp, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_temp, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_temp, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_welcome = lv_label_create(ui_Home_Scr);
+    lv_obj_set_width(ui_welcome, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_welcome, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_welcome, 1);
+    lv_obj_set_y(ui_welcome, -85);
+    lv_obj_set_align(ui_welcome, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_welcome, "Welcome Back");
+    lv_obj_set_style_text_color(ui_welcome, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_welcome, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_welcome, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Button1 = lv_btn_create(ui_Home_Scr);
     lv_obj_set_width(ui_Button1, 75);
@@ -175,7 +175,7 @@ void ui_Home_Scr_screen_destroy(void)
     ui_Image8 = NULL;
     ui_Settings_Btn_Home = NULL;
     ui_Settings_Icon_Home = NULL;
-    ui_temp = NULL;
+    ui_welcome = NULL;
     ui_Button1 = NULL;
     ui_Image2 = NULL;
 

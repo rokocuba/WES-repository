@@ -34,6 +34,7 @@ static void *s_reading_cb_ctx = NULL;
 
 extern SemaphoreHandle_t p_gui_semaphore;
 extern lv_obj_t *ui_temp;
+extern lv_obj_t *ui_Vlagavalue;
 
 static esp_err_t sht31_i2c_sensor_init(void)
 {
@@ -127,17 +128,22 @@ static void sht31_ui_task(void *pvParameters)
 {
     (void)pvParameters;
 
-    char buf[32];
+    char temp_buf[32];
+    char humidity_buf[32];
 
     for (;;) {
         sht31_reading_t reading;
         if (sht31_service_get_latest(&reading) == ESP_OK) {
-            snprintf(buf, sizeof(buf), "%.1f C", reading.temperature_c);
+            snprintf(temp_buf, sizeof(temp_buf), "%.1f C", reading.temperature_c);
+            snprintf(humidity_buf, sizeof(humidity_buf), "%.1f %%", reading.humidity_percent);
 
-            if (p_gui_semaphore != NULL && ui_temp != NULL) {
+            if (p_gui_semaphore != NULL && (ui_temp != NULL || ui_Vlagavalue != NULL)) {
                 if (pdTRUE == xSemaphoreTake(p_gui_semaphore, pdMS_TO_TICKS(200))) {
-                    if (lv_obj_is_valid(ui_temp)) {
-                        lv_label_set_text(ui_temp, buf);
+                    if (ui_temp != NULL && lv_obj_is_valid(ui_temp)) {
+                        lv_label_set_text(ui_temp, temp_buf);
+                    }
+                    if (ui_Vlagavalue != NULL && lv_obj_is_valid(ui_Vlagavalue)) {
+                        lv_label_set_text(ui_Vlagavalue, humidity_buf);
                     }
                     xSemaphoreGive(p_gui_semaphore);
                 }

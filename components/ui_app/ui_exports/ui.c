@@ -18,6 +18,14 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 lv_obj_t * ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
+lv_img_dsc_t * ui_imgset_[] = {
+    (lv_img_dsc_t *)&ui_img_5224653,
+    (lv_img_dsc_t *)&ui_img_dots_png,
+    (lv_img_dsc_t *)&ui_img_previous_png,
+    (lv_img_dsc_t *)&ui_img_pause_png,
+    (lv_img_dsc_t *)&ui_img_next_png,
+    (lv_img_dsc_t *)&ui_img_117368779,
+};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16

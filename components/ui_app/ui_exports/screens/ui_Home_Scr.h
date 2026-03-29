@@ -21,7 +21,7 @@ extern void ui_event_Settings_Btn_Home(lv_event_t * e);
 extern lv_obj_t * ui_Settings_Btn_Home;
 extern void ui_event_Settings_Icon_Home(lv_event_t * e);
 extern lv_obj_t * ui_Settings_Icon_Home;
-extern lv_obj_t * ui_temp;
+extern lv_obj_t * ui_welcome;
 extern void ui_event_Button1(lv_event_t * e);
 extern lv_obj_t * ui_Button1;
 extern void ui_event_Image2(lv_event_t * e);
