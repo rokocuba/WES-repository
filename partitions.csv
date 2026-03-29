@@ -1,4 +1,4 @@
 # Name,   Type, SubType,  Offset,  Size
 nvs,      data, nvs,      0x9000,  0x5000
-app,      app,  factory,  0x10000, 1024K
-storage,  data, spiffs,   ,        960K
+app,      app,  factory,  0x10000, 1408K
+storage,  data, spiffs,   ,        576K

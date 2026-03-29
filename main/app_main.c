@@ -1,13 +1,19 @@
 //--------------------------------- INCLUDES ----------------------------------
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
+#include "freertos/task.h"
 
 #include "esp_log.h"
 #include "esp_err.h"
+#include "esp_event.h"
+#include "esp_netif.h"
+#include "esp_wifi.h"
+#include "nvs_flash.h"
 
 #include "driver/gpio.h"
 #include "driver/i2s_std.h"
@@ -49,9 +55,29 @@ static bool s_ml_uart_ready = false;
 #define SAMPLE_RATE 22050
 #define TAG         "audio"
 
+#define DEFAULT_AUDIO_WAV_PATH "/spiffs/output.wav"
+#define SIREN_WAV_PATH         "/spiffs/siren.wav"
+
+#define ANCHOR_SSID             "FTM_Anchor"
+#define ANCHOR_CHANNEL           1
+#define RSSI_SCAN_PERIOD_MS     3000
+#define RSSI_ALERT_DISTANCE_M   6.0f
+#define RSSI_REF_DBM_AT_1M     -45.0f
+#define RSSI_PATH_LOSS_FACTOR   2.2f
+#define RSSI_SIREN_COOLDOWN_MS  8000
+
+#define SIREN_FREQ_LOW_HZ       650.0f
+#define SIREN_FREQ_HIGH_HZ      1500.0f
+#define SIREN_TOTAL_MS          2200
+#define SIREN_CYCLE_MS          900
+#define SIREN_AMPLITUDE         30000.0f
+
 
 static i2s_chan_handle_t tx_chan;
 static TaskHandle_t s_audio_task = NULL;
+static TaskHandle_t s_anchor_rssi_task = NULL;
+static TickType_t s_last_siren_tick = 0;
+static bool s_rssi_wifi_ready = false;
 
 // WAV header is 44 bytes, this struct maps it
 typedef struct {
@@ -192,27 +218,271 @@ static void play_wav(const char *path)
     ESP_LOGI(TAG, "Done - played %u bytes", (unsigned)total);
 }
 
+static void play_generated_siren(void)
+{
+    const float two_pi = 6.28318530718f;
+    const float amplitude = SIREN_AMPLITUDE;
+    const size_t samples_per_chunk = 256;
+    const uint32_t chunk_ms = (uint32_t)((samples_per_chunk * 1000U) / SAMPLE_RATE);
+    int16_t pcm[samples_per_chunk];
+    float phase = 0.0f;
+    uint32_t elapsed_ms = 0;
+
+    ESP_LOGI(TAG_MAIN, "Playing generated siren tone");
+
+    while (elapsed_ms < SIREN_TOTAL_MS) {
+        uint32_t cycle_pos_ms = elapsed_ms % SIREN_CYCLE_MS;
+        float cycle_pos = (float)cycle_pos_ms / (float)SIREN_CYCLE_MS;
+        float freq_hz = 0.0f;
+
+        if (cycle_pos < 0.5f) {
+            freq_hz = SIREN_FREQ_LOW_HZ +
+                      (SIREN_FREQ_HIGH_HZ - SIREN_FREQ_LOW_HZ) * (cycle_pos / 0.5f);
+        } else {
+            freq_hz = SIREN_FREQ_HIGH_HZ -
+                      (SIREN_FREQ_HIGH_HZ - SIREN_FREQ_LOW_HZ) * ((cycle_pos - 0.5f) / 0.5f);
+        }
+
+        float phase_step = two_pi * freq_hz / (float)SAMPLE_RATE;
+        for (size_t i = 0; i < samples_per_chunk; i++) {
+            pcm[i] = (int16_t)(sinf(phase) * amplitude);
+            phase += phase_step;
+            if (phase >= two_pi) {
+                phase -= two_pi;
+            }
+        }
+
+        size_t bytes_written = 0;
+        (void)i2s_channel_write(tx_chan, pcm, sizeof(pcm), &bytes_written, portMAX_DELAY);
+        elapsed_ms += chunk_ms;
+    }
+
+    memset(pcm, 0, sizeof(pcm));
+    for (int i = 0; i < 3; i++) {
+        size_t bytes_written = 0;
+        (void)i2s_channel_write(tx_chan, pcm, sizeof(pcm), &bytes_written, portMAX_DELAY);
+    }
+}
+
 static void audio_task(void *arg)
 {
-    play_wav("/spiffs/output.wav");
+    const char *path = (const char *)arg;
+    if (path == NULL) {
+        path = DEFAULT_AUDIO_WAV_PATH;
+    }
+
+    if (strcmp(path, SIREN_WAV_PATH) == 0) {
+        play_generated_siren();
+    } else {
+        play_wav(path);
+    }
+
     s_audio_task = NULL;
     vTaskDelete(NULL);
 }
 
-esp_err_t audio_play_request_once(void)
+static esp_err_t audio_play_path_request_once(const char *path)
 {
+    if (path == NULL) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
     if (s_audio_task != NULL) {
         ESP_LOGI(TAG_MAIN, "Audio playback already in progress");
         return ESP_ERR_INVALID_STATE;
     }
 
-    BaseType_t ok = xTaskCreate(audio_task, "audio", 4096, NULL, 5, &s_audio_task);
+    BaseType_t ok = xTaskCreate(audio_task, "audio", 4096, (void *)path, 5, &s_audio_task);
     if (ok != pdPASS) {
         s_audio_task = NULL;
         ESP_LOGE(TAG_MAIN, "Failed to create audio playback task");
         return ESP_FAIL;
     }
 
+    return ESP_OK;
+}
+
+esp_err_t audio_play_request_once(void)
+{
+    return audio_play_path_request_once(DEFAULT_AUDIO_WAV_PATH);
+}
+
+static float estimate_distance_from_rssi_m(int8_t rssi_dbm)
+{
+    return powf(10.0f,
+                (RSSI_REF_DBM_AT_1M - (float)rssi_dbm) / (10.0f * RSSI_PATH_LOSS_FACTOR));
+}
+
+static esp_err_t rssi_wifi_init(void)
+{
+    if (s_rssi_wifi_ready) {
+        return ESP_OK;
+    }
+
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG_MAIN, "NVS init failed for RSSI monitor: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    err = esp_netif_init();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        ESP_LOGE(TAG_MAIN, "esp_netif_init failed: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    err = esp_event_loop_create_default();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        ESP_LOGE(TAG_MAIN, "esp_event_loop_create_default failed: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    if (esp_netif_get_handle_from_ifkey("WIFI_STA_DEF") == NULL) {
+        esp_netif_create_default_wifi_sta();
+    }
+
+    wifi_init_config_t wifi_cfg = WIFI_INIT_CONFIG_DEFAULT();
+    err = esp_wifi_init(&wifi_cfg);
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        ESP_LOGE(TAG_MAIN, "esp_wifi_init failed: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    err = esp_wifi_set_storage(WIFI_STORAGE_RAM);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG_MAIN, "esp_wifi_set_storage failed: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    err = esp_wifi_set_mode(WIFI_MODE_STA);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG_MAIN, "esp_wifi_set_mode failed: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    err = esp_wifi_start();
+    if (err != ESP_OK && err != ESP_ERR_WIFI_CONN) {
+        ESP_LOGE(TAG_MAIN, "esp_wifi_start failed: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    s_rssi_wifi_ready = true;
+    ESP_LOGI(TAG_MAIN, "RSSI monitor Wi-Fi initialized in STA mode");
+    return ESP_OK;
+}
+
+static bool anchor_read_rssi_once(int8_t *out_rssi_dbm)
+{
+    if (out_rssi_dbm == NULL) {
+        return false;
+    }
+
+    wifi_scan_config_t scan_cfg = {
+        .ssid = (uint8_t *)ANCHOR_SSID,
+        .channel = ANCHOR_CHANNEL,
+        .show_hidden = false,
+    };
+
+    esp_err_t err = esp_wifi_scan_start(&scan_cfg, true);
+    if (err != ESP_OK) {
+        ESP_LOGW(TAG_MAIN, "Wi-Fi scan failed: %s", esp_err_to_name(err));
+        return false;
+    }
+
+    uint16_t found = 0;
+    err = esp_wifi_scan_get_ap_num(&found);
+    if (err != ESP_OK || found == 0) {
+        return false;
+    }
+
+    wifi_ap_record_t ap_record;
+    uint16_t ap_count = 1;
+    err = esp_wifi_scan_get_ap_records(&ap_count, &ap_record);
+    if (err != ESP_OK || ap_count == 0) {
+        return false;
+    }
+
+    *out_rssi_dbm = ap_record.rssi;
+    return true;
+}
+
+static void maybe_play_siren(void)
+{
+    TickType_t now = xTaskGetTickCount();
+    TickType_t cooldown_ticks = pdMS_TO_TICKS(RSSI_SIREN_COOLDOWN_MS);
+    if ((now - s_last_siren_tick) < cooldown_ticks) {
+        return;
+    }
+
+    s_last_siren_tick = now;
+    esp_err_t err = audio_play_path_request_once(SIREN_WAV_PATH);
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG_MAIN, "Failed to trigger siren playback: %s", esp_err_to_name(err));
+    }
+}
+
+static void anchor_rssi_monitor_task(void *arg)
+{
+    (void)arg;
+
+    for (;;) {
+        int8_t rssi_dbm = 0;
+        bool has_anchor = anchor_read_rssi_once(&rssi_dbm);
+        bool out_of_range = true;
+
+        if (has_anchor) {
+            float distance_m = estimate_distance_from_rssi_m(rssi_dbm);
+            out_of_range = (distance_m > RSSI_ALERT_DISTANCE_M);
+
+            ESP_LOGI(TAG_MAIN,
+                     "Anchor '%s' RSSI=%d dBm, est distance=%.2f m (limit=%.2f m)",
+                     ANCHOR_SSID,
+                     (int)rssi_dbm,
+                     distance_m,
+                     RSSI_ALERT_DISTANCE_M);
+        } else {
+            out_of_range = false;  // treat as in-range if we can't read it at all
+            ESP_LOGW(TAG_MAIN, "Anchor '%s' not found in scan", ANCHOR_SSID);
+        }
+
+        if (out_of_range) {
+            maybe_play_siren();
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(RSSI_SCAN_PERIOD_MS));
+    }
+}
+
+static esp_err_t start_anchor_rssi_monitor(void)
+{
+    if (s_anchor_rssi_task != NULL) {
+        return ESP_OK;
+    }
+
+    esp_err_t err = rssi_wifi_init();
+    if (err != ESP_OK) {
+        return err;
+    }
+
+    BaseType_t ok = xTaskCreate(anchor_rssi_monitor_task,
+                                "anchor_rssi",
+                                4096,
+                                NULL,
+                                5,
+                                &s_anchor_rssi_task);
+    if (ok != pdPASS) {
+        s_anchor_rssi_task = NULL;
+        return ESP_FAIL;
+    }
+
+    ESP_LOGI(TAG_MAIN,
+             "RSSI distance monitor started for SSID '%s' (alert > %.2f m)",
+             ANCHOR_SSID,
+             RSSI_ALERT_DISTANCE_M);
     return ESP_OK;
 }
 
@@ -484,6 +754,10 @@ void app_main() {
 
     i2s_init();
     spiffs_init();
+
+    if (start_anchor_rssi_monitor() != ESP_OK) {
+        ESP_LOGW(TAG_MAIN, "RSSI monitor init failed; siren range alert disabled");
+    }
 
     if (camera_capture_start(&cfg) != ESP_OK) {
         ESP_LOGE(TAG_MAIN, "Halting program. Capture module failed to initialize.");
