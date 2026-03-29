@@ -25,7 +25,7 @@ The LVGL and driver setup is already done – students only need to work in Squa
     - **Windows (PowerShell)**: `.\scripts\apply_patch.ps1`
     - **Linux/macOS (bash)**: `./scripts/apply_patch.sh`
 
-These scripts apply `components/lvgl_esp32_drivers_8-3.patch` so the display drivers match LVGL 8.3.4.
+These scripts apply `patches/lvgl_esp32_drivers_8-3.patch` so the display drivers match LVGL 8.3.4.
 
 If you use the Byte Lab DevKit, copy defaults once:
 
@@ -106,7 +106,7 @@ You normally don’t need to touch any LVGL or driver code – focus on SquareLi
 This template depends on
 
 - [lvgl](https://github.com/lvgl/lvgl)
-- [lvgl_esp32_drivers](https://github.com/lvgl/lvgl_esp32_drivers) (patched for LVGL 8.3 – see `components/lvgl_esp32_drivers_8-3.patch` or `patches/`)
+- [lvgl_esp32_drivers](https://github.com/lvgl/lvgl_esp32_drivers) (patched for LVGL 8.3 – see `patches/lvgl_esp32_drivers_8-3.patch`)
 
 ---
 

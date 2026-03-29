@@ -17,6 +17,9 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
 // EVENTS
 lv_obj_t * ui____initial_actions0;
 
+// Camera capture expects this symbol even if the current UI export does not define a camera image widget.
+lv_obj_t * ui_camImage = NULL;
+
 // IMAGES AND IMAGE SETS
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -307,8 +310,6 @@ lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay)
 
 void ui_init(void)
 {
-    LV_EVENT_GET_COMP_CHILD = lv_event_register_id();
-
     lv_disp_t * dispp = lv_disp_get_default();
     lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
                                                false, LV_FONT_DEFAULT);

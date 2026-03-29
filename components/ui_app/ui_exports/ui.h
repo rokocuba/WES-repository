@@ -11,12 +11,8 @@ extern "C" {
 #endif
 
 #include "lvgl.h"
-
-#include "ui_helpers.h"
-#include "components/ui_comp.h"
-#include "components/ui_comp_hook.h"
 #include "ui_events.h"
-
+#include "ui_helpers.h"
 
 ///////////////////// SCREENS ////////////////////
 
@@ -27,19 +23,21 @@ extern "C" {
 
 ///////////////////// VARIABLES ////////////////////
 
-extern lv_anim_t * SpinAndLargen_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * LargeBtn_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * MoveColorToCenter_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * MoveSettingsToCenter_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * HideBtn_Animation(lv_obj_t * TargetObject, int delay);
-extern lv_anim_t * ShowBtn_Animation(lv_obj_t * TargetObject, int delay);
+extern lv_anim_t* SpinAndLargen_Animation(lv_obj_t* TargetObject, int delay);
+extern lv_anim_t* LargeBtn_Animation(lv_obj_t* TargetObject, int delay);
+extern lv_anim_t* MoveColorToCenter_Animation(lv_obj_t* TargetObject,
+                                              int delay);
+extern lv_anim_t* MoveSettingsToCenter_Animation(lv_obj_t* TargetObject,
+                                                 int delay);
+extern lv_anim_t* HideBtn_Animation(lv_obj_t* TargetObject, int delay);
+extern lv_anim_t* ShowBtn_Animation(lv_obj_t* TargetObject, int delay);
 
 // EVENTS
 
-extern lv_obj_t * ui____initial_actions0;
+extern lv_obj_t* ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-LV_IMG_DECLARE(ui_img_home_icon_png);    // assets/home_icon.png
+LV_IMG_DECLARE(ui_img_home_icon_png);  // assets/home_icon.png
 
 // UI INIT
 void ui_init(void);
